@@ -36,10 +36,12 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
+     <Compile Include="Assets\scriptes\objectPooler.cs" />
      <Compile Include="Assets\scriptes\Waypoint.cs" />
      <Compile Include="Assets\scriptes\WaypointEditor.cs" />
      <Compile Include="Assets\scriptes\spawner.cs" />
-     <Compile Include="Assets\scriptes\objectPooler.cs" />
+     <Compile Include="Assets\scriptes\enemy\Enemy.cs" />
+     <Compile Include="Assets\scriptes\managers\LevelManager.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.30f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

@@ -45,4 +45,9 @@ public class objectPooler : MonoBehaviour
         }
         return CreateInstance();
     }
+    //enemy를 pool로 되돌리는 메소드
+    public static void ReturnToPool(GameObject instance)
+    {
+        instance.SetActive(false);
+    }
 }
