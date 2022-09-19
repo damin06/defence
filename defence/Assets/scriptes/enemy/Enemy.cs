@@ -83,4 +83,9 @@ public class Enemy : MonoBehaviour
         
         objectPooler.ReturnToPool(gameObject);
     }
+
+    public void ResetEnemy()
+    {
+        _currentWaypointIndex = 0;
+    }
 }

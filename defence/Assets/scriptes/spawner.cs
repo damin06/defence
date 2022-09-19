@@ -14,6 +14,7 @@ public class spawner : MonoBehaviour
     [SerializeField]private int enemyCount = 10;
     [SerializeField]private SpawnModes spawnmodes = SpawnModes.Fixed;
     [SerializeField]private GameObject testGO;
+    [SerializeField]private float delayBtwWaves = 1f;
 
     [Header("Fixed Delay")]
     [SerializeField]private float delayBtwSpawns;
@@ -29,12 +30,14 @@ public class spawner : MonoBehaviour
 
     private float _spawnTimer;
     private float _enemiesSpawned;
+    private int _enemiesRemainnig;
 
     void Start()
     {
-        
         _pooler = GetComponent<objectPooler>();
         _waypoint = GetComponent<Waypoint>();
+
+        _enemiesRemainnig = enemyCount; //10개
     }
     void Update()
     {
@@ -70,14 +73,44 @@ public class spawner : MonoBehaviour
         GameObject newInstance = _pooler.GetInstaceFromPool();
         //Instantiate(testGO, transform.position, Quaternion.identity);
 
-        newInstance.gameObject.SetActive(true);
         Enemy enemy = newInstance.GetComponent<Enemy>();
         enemy.waypoint = _waypoint;
         enemy.transform.localPosition = transform.position;
+        
+        enemy.ResetEnemy();
+        newInstance.gameObject.SetActive(true);
     }
     private float GetRandomDelay()
     {
         float randomTimer = UnityEngine.Random.Range(minRandomDelay,maxRandomDelay);
         return randomTimer;
+    }
+    
+    private IEnumerator NextWave()
+    {
+        yield return new WaitForSeconds(delayBtwSpawns);
+        _enemiesRemainnig = enemyCount;
+        _spawnTimer = 0;
+        _enemiesSpawned = 0;
+    }
+
+    private void RecordEnmyEndReached()
+    {
+        _enemiesRemainnig--;
+        if(_enemiesRemainnig <= 0)
+        {
+            //새 wave 시작
+            StartCoroutine(NextWave());
+        }
+    }
+
+    private void OnEnable()
+    {
+        Enemy.OnEndReached +=RecordEnmyEndReached;
+    }
+
+    private void OnDisable()
+    {
+        Enemy.OnEndReached -=RecordEnmyEndReached;
     }
 }
