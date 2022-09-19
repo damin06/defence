@@ -8,7 +8,8 @@ public class Enemy : MonoBehaviour
     public static Action OnEndReached;
     [SerializeField] private float moveSpeed = 3.0f;
     private int _currentWaypointIndex;
-    [SerializeField] private Waypoint waypoint;
+    //[SerializeField] private Waypoint waypoint;
+    public Waypoint waypoint{get; set;}
     public Vector3 CurrentPointPosition => waypoint.GetWaypointPosition(_currentWaypointIndex);
     //Vector3 vec;
 

@@ -24,6 +24,7 @@ public class spawner : MonoBehaviour
 
 //pooler 선언
     private objectPooler _pooler;
+    private Waypoint _waypoint;
 
 
     private float _spawnTimer;
@@ -31,7 +32,9 @@ public class spawner : MonoBehaviour
 
     void Start()
     {
+        
         _pooler = GetComponent<objectPooler>();
+        _waypoint = GetComponent<Waypoint>();
     }
     void Update()
     {
@@ -68,6 +71,9 @@ public class spawner : MonoBehaviour
         //Instantiate(testGO, transform.position, Quaternion.identity);
 
         newInstance.gameObject.SetActive(true);
+        Enemy enemy = newInstance.GetComponent<Enemy>();
+        enemy.waypoint = _waypoint;
+        enemy.transform.localPosition = transform.position;
     }
     private float GetRandomDelay()
     {
