@@ -11,6 +11,8 @@ public class Enemy : MonoBehaviour
     //[SerializeField] private Waypoint waypoint;
     public Waypoint waypoint{get; set;}
     public Vector3 CurrentPointPosition => waypoint.GetWaypointPosition(_currentWaypointIndex);
+
+    private enemyHealth _enemyHealth;
     //Vector3 vec;
 
     private void Update()
@@ -38,6 +40,7 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        _enemyHealth = GetComponent<enemyHealth>();
         _currentWaypointIndex = 0;
     }
 
@@ -70,17 +73,18 @@ public class Enemy : MonoBehaviour
         else
         {
             //enemy가 끝까지 도착했다면 object pooler로 되돌린다
-            ReturnEnemyToPool();
+            EndpoolReached();
         }
     }
 
-    private void ReturnEnemyToPool()
+    private void EndpoolReached()
     {
         if(OnEndReached != null)
         {
             OnEndReached.Invoke();
         }
         
+        _enemyHealth.RestHealth();
         objectPooler.ReturnToPool(gameObject);
     }
 

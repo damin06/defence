@@ -10,6 +10,7 @@ public enum SpawnModes
     }
 public class spawner : MonoBehaviour
 {
+    
     [Header("Setting")]
     [SerializeField]private int enemyCount = 10;
     [SerializeField]private SpawnModes spawnmodes = SpawnModes.Fixed;
@@ -94,7 +95,7 @@ public class spawner : MonoBehaviour
         _enemiesSpawned = 0;
     }
 
-    private void RecordEnmyEndReached()
+    private void RecordEnmy()
     {
         _enemiesRemainnig--;
         if(_enemiesRemainnig <= 0)
@@ -106,11 +107,13 @@ public class spawner : MonoBehaviour
 
     private void OnEnable()
     {
-        Enemy.OnEndReached +=RecordEnmyEndReached;
+        Enemy.OnEndReached +=RecordEnmy;
+        enemyHealth.OnEnemyKilled += RecordEnmy;
     }
 
     private void OnDisable()
     {
-        Enemy.OnEndReached -=RecordEnmyEndReached;
+        Enemy.OnEndReached -=RecordEnmy;
+        enemyHealth.OnEnemyKilled -= RecordEnmy;
     }
 }
