@@ -40,10 +40,11 @@
      <Compile Include="Assets\scriptes\enemy\enemyHealth.cs" />
      <Compile Include="Assets\scriptes\Waypoint.cs" />
      <Compile Include="Assets\scriptes\Managers\LevelManager.cs" />
+     <Compile Include="Assets\scriptes\enemy\EnemyHealthContainer.cs" />
      <Compile Include="Assets\scriptes\WaypointEditor.cs" />
      <Compile Include="Assets\scriptes\enemy\Enemy.cs" />
      <Compile Include="Assets\scriptes\spawner.cs" />
-     <Compile Include="Assets\scriptes\enemy\EnemyHealthContainer.cs" />
+     <Compile Include="Assets\scriptes\enemy\EnemyAnimation.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:\Program Files\Unity\Hub\Editor\2020.3.30f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

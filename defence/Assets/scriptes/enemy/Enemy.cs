@@ -7,6 +7,8 @@ public class Enemy : MonoBehaviour
 {
     public static Action OnEndReached;
     [SerializeField] private float moveSpeed = 3.0f;
+
+    public float MoveSpeed {get; set;}
     private int _currentWaypointIndex;
     //[SerializeField] private Waypoint waypoint;
     public Waypoint waypoint{get; set;}
@@ -42,17 +44,29 @@ public class Enemy : MonoBehaviour
     {
         _enemyHealth = GetComponent<enemyHealth>();
         _currentWaypointIndex = 0;
+        MoveSpeed = moveSpeed;
     }
 
     private void Move()
     {
         //Vector3 currentPosition = waypoint.GetWaypointPosition(_currentWaypointIndex);
-        transform.position = Vector3.MoveTowards(transform.position,CurrentPointPosition,moveSpeed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position,CurrentPointPosition,MoveSpeed * Time.deltaTime);
         // if(currentPosition == vec)
         // {
         //     _currentWaypointIndex++;
         // }
     }
+
+    public void StopMovement()
+    {
+        MoveSpeed = 0;  
+    }
+
+    public void ResumeMovemnet()
+    {
+        MoveSpeed = moveSpeed;
+    }
+
     private bool CurrentPositionReached()
     {
         float distanceToNextPointPosition = (transform.position - CurrentPointPosition).magnitude;

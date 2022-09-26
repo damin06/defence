@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class enemyHealth : MonoBehaviour
 {
     public static Action OnEnemyKilled;
+    public static Action<Enemy> OnEnemyHit;
     [SerializeField] private GameObject healthBarPrefab;
     [SerializeField] private Transform barPosition;
 
