@@ -18,7 +18,7 @@ public class EnemyHealth : MonoBehaviour
     public float currentHealth { get; set; }
 
     private Image _healthBar;
-    private Enemy _enemy;   
+    private Enemy _enemy;
 
     private EnemyAnimation _enemyAnimation;
 
