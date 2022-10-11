@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class EnemyHealthContainer : MonoBehaviour
 {
-    [SerializeField] private Image _fillAmountImage;
+    [SerializeField] private Image fillAmountImage;
 
-    public Image fillAmountImage => _fillAmountImage;
+    public Image FillAmountImage => fillAmountImage;
 }

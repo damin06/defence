@@ -7,96 +7,105 @@ public enum SpawnModes
     Fixed,
     Random
 }
-
-public class Spawner : MonoBehaviour
+public class spawner : MonoBehaviour
 {
-    [Header ("SpawnMode")]
-    [SerializeField] private SpawnModes _spawnMode = SpawnModes.Fixed;
-    [SerializeField] private int _enemyCnt = 10;
+    [Header("Settings")]
+    [SerializeField]
+    private SpawnModes spawnMode = SpawnModes.Fixed;
+    [SerializeField]
+    private int enemyCount = 10;
 
-    [SerializeField] private float _delayBtnWaves = 1f;
+    [SerializeField] private float delayBtwWaves = 1f;
     
-    [Header ("SpawnDelay")]
-    [SerializeField] private float _minRandomDelay;
-    [SerializeField] private float _maxRandomDelay;
-    [SerializeField] private float _spawnTimeInt = 2;
 
-    private ObjectPooler _pooler;
-    private WayPoint _waypoint;
+    [Header("Fixed Delay")]
+    [SerializeField]
+    private float delayBtwSpawns;
 
-    private float _spawnTime;
+    [Header("Random Delay")]
+    [SerializeField]
+    private float minRandomDelay;
+    [SerializeField]
+    private float maxRandomDelay;
+
+    //pooler 선언
+    private objectPooler _pooler;
+    private waypoint _waypoint;
+
+    private float _spawnTimer;
     private float _enemiesSpawned;
     private int _enemiesRemaining;
 
-    private void Awake()
+    void Start()
     {
-        _pooler = GetComponent<ObjectPooler>();
-        _waypoint = GetComponent<WayPoint>();
+        _pooler = GetComponent<objectPooler>();
+        _waypoint = GetComponent<waypoint>();
+
+        _enemiesRemaining = enemyCount; //10
     }
 
-    private void Start()
+    void Update()
     {
-        _enemiesRemaining = _enemyCnt;
-    }
-
-    private void Update()
-    {
-        _spawnTime += Time.deltaTime;
-
-        if (_spawnTime > GetSpawnDelay() && _enemiesSpawned < _enemyCnt)
+        _spawnTimer -= Time.deltaTime;
+        if(_spawnTimer < 0)
         {
-            _spawnTime = 0;
-            SpawnEnemy();
-            _enemiesSpawned++;
+            _spawnTimer = GetSpawnDelay();
+            if(_enemiesSpawned < enemyCount)
+            {
+                _enemiesSpawned++;
+                SpawnEnemy();
+            }
         }
     }
 
     private void SpawnEnemy()
     {
         GameObject newInstance = _pooler.GetInstanceFromPool();
+        //Instantiate(testGO, transform.position, Quaternion.identity);
 
         Enemy enemy = newInstance.GetComponent<Enemy>();
         enemy.waypoint = _waypoint;
 
         enemy.ResetEnemy();
-
         enemy.transform.localPosition = transform.position;
 
-        newInstance.SetActive(true);
+
+        newInstance.active = true;
     }
 
     private float GetSpawnDelay()
     {
-        if (_spawnMode == SpawnModes.Random)
+        float delay = 0f;
+        if(spawnMode == SpawnModes.Fixed)
         {
-            float randomTimer = Random.Range(_minRandomDelay, _maxRandomDelay);
-            return randomTimer;
+            delay = delayBtwSpawns;
         }
-        
-        else if (_spawnMode == SpawnModes.Fixed)
-            return _spawnTimeInt;
-
         else
         {
-            Debug.LogError("Spawner의 SpawnMode이 설정 되지 않은 값입니다");
-            return 999;
+            delay = GetRandomDelay();
         }
+        return delay;
     }
 
+    private float GetRandomDelay()
+    {
+        float randomTimer = Random.Range(minRandomDelay, maxRandomDelay);
+        return randomTimer;
+    }
     private IEnumerator NextWave()
     {
-        yield return new WaitForSeconds(_delayBtnWaves);
-        _enemiesRemaining = _enemyCnt;
-        _spawnTime = 0f;
+        yield return new WaitForSeconds(delayBtwSpawns);
+        _enemiesRemaining = enemyCount;
+        _spawnTimer = 0f;
         _enemiesSpawned = 0;
     }
 
-    private void RecordEnemy()
+    private void RecordEnemy(Enemy enemy)
     {
         _enemiesRemaining--;
-
-        if (_enemiesRemaining <= 0)
+        if(_enemiesRemaining <= 0)
         {
+            //새 wave 시작
             StartCoroutine(NextWave());
         }
     }
@@ -104,12 +113,12 @@ public class Spawner : MonoBehaviour
     private void OnEnable()
     {
         Enemy.OnEndReached += RecordEnemy;
-        EnemyHealth.onEnemyKilled += RecordEnemy;
+        EnemyHealth.OnEnemyKilled += RecordEnemy;
     }
 
     private void OnDisable()
     {
         Enemy.OnEndReached -= RecordEnemy;
-        EnemyHealth.onEnemyKilled -= RecordEnemy;
+        EnemyHealth.OnEnemyKilled -= RecordEnemy;
     }
 }

@@ -4,30 +4,34 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] private int _lives = 10;
-    
-    public int totalLives { get; set; }
+    [SerializeField] private int lives = 10;
+
+    public int TotalLives {get; set; }
 
     private void Start()
     {
-        totalLives = _lives;
+        TotalLives = lives;
+        if(TotalLives <= 0)
+        {
+            TotalLives = 0;
+        }
 
-        if (totalLives <= 0)
-            totalLives = 0;
     }
-
-    private void ReduceLives()
+    private void ReduceLives(Enemy enemy)
     {
-        totalLives--;
+        TotalLives--;
     }
 
-    private void OnEnable() //게임오브젝트가 활성화 될떄마다
+    private void OnEnable()//게임 오브젝트가 활성화 될때마다
     {
         Enemy.OnEndReached += ReduceLives;
     }
 
-    private void OnDisable() //게임오브젝트가 비활성화 될떄마다
+    private void OnDisable()//게임 오브젝트가 비활성화 될때
     {
         Enemy.OnEndReached -= ReduceLives;
     }
 }
+
+
+

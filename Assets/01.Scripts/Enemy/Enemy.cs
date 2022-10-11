@@ -5,110 +5,116 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private float _moveSpeed = 3.0f;
+    public static Action<Enemy> OnEndReached;
 
-    public static Action OnEndReached;
+    [SerializeField] private float moveSpeed = 3.0f;
+    public float MoveSpeed { get; set; }
+    //[SerializeField] private waypoint waypoint;
 
-    public float moveSpeed { get; set; }
+    public waypoint waypoint { get; set; }
 
-    public WayPoint waypoint { get; set; }
-
-    public Vector3 currentPointPosition => waypoint.GetWayPointPosition(_currentWaypointIndex);
+    public Vector3 CurrentPointPosition => waypoint.GetWaypointPosition(_currentWaypointIndex);
 
     private int _currentWaypointIndex;
     private Vector3 _lastPointPosition;
 
     private EnemyHealth _enemyHealth;
-    private SpriteRenderer _spriteRenderer;
+    private SpriteRenderer _spriteRenderer; //flip
 
-    private void Awake()
-    {
-        _enemyHealth = GetComponent<EnemyHealth>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
-    }
+    public EnemyHealth EnemyHealth { get; set; }
 
     private void Start()
     {
         _currentWaypointIndex = 0;
-        
-        moveSpeed = _moveSpeed;
+        _enemyHealth = GetComponent<EnemyHealth>();
+        EnemyHealth = GetComponent<EnemyHealth>();
+
+        MoveSpeed = moveSpeed;
         _lastPointPosition = transform.position;
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Update()
     {
-        /*if (_currentWaypointIndex == _wayPoint.points.Length)
-            return;*/
-
         Move();
         Rotate();
 
         if (CurrentPointPositionReached())
+        {
             UpdateCurrentPointIndex();
+        }
     }
 
     private void Move()
     {
-        transform.position = Vector3.MoveTowards(transform.position, currentPointPosition, moveSpeed * Time.deltaTime);
-
-        if (currentPointPosition == transform.position && transform.position != transform.position)
-            _currentWaypointIndex++;
+        //Vector3 currentPosition = waypoint.GetWaypointPosition(_currentWaypointIndex);
+        transform.position = Vector3.MoveTowards(transform.position, CurrentPointPosition, MoveSpeed * Time.deltaTime);
     }
 
     public void StopMovement()
     {
-        moveSpeed = 0;
+        MoveSpeed = 0f;
     }
 
     public void ResumeMovement()
     {
-        moveSpeed = _moveSpeed;
+        MoveSpeed = moveSpeed;
     }
+
+
 
     private bool CurrentPointPositionReached()
     {
-        float distanceToNextPointPotion = (transform.position - currentPointPosition).magnitude;
-        if (distanceToNextPointPotion < 0.1f)
+        float distanceToNextPointPosition = (transform.position - CurrentPointPosition).magnitude;
+        if(distanceToNextPointPosition < 0.1f)
         {
             _lastPointPosition = transform.position;
             return true;
         }
-        else
-            return false;
+        return false;
     }
 
     private void Rotate()
     {
-        if (currentPointPosition.x > _lastPointPosition.x)
-            _spriteRenderer.flipX = false;
+        if(CurrentPointPosition.x  > _lastPointPosition.x)
+        {
+            _spriteRenderer.flipX = false; //오른쪽 향하게
+        }
         else
-            _spriteRenderer.flipX = true;
+        {
+            _spriteRenderer.flipX = true; //왼쪽 향하게
+        }
     }
 
     private void UpdateCurrentPointIndex()
     {
-        int lastWaypointIndex = waypoint.points.Length - 1;
-        if (_currentWaypointIndex < lastWaypointIndex)
+        int lastWaypointIndex = waypoint.Points.Length - 1;
+        if(_currentWaypointIndex < lastWaypointIndex)
+        {
             _currentWaypointIndex++;
+        }
         else
+        {
+            //enemy가 끝까지 도착했다면 object pooler로 되돌린다
             EndPointReached();
+        }
     }
 
     private void EndPointReached()
     {
-        OnEndReached?.Invoke(); // if (OndEndReached != null) OnEndReached.Invoke(); << 이거랑 똑같음
-        
+        if(OnEndReached != null)
+        {
+            OnEndReached.Invoke(this);
+        }
+
+        //OnEndReached?.Invoke();
+
         _enemyHealth.ResetHealth();
-        ObjectPooler.ReturnToPool(gameObject);
+        objectPooler.ReturnToPool(gameObject);
     }
 
     public void ResetEnemy()
     {
         _currentWaypointIndex = 0;
-    }
-
-    public void EnemyDie()
-    {
-        _enemyHealth.Die();
     }
 }

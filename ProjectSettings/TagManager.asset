@@ -43,11 +43,11 @@ TagManager:
     uniqueID: 0
     locked: 0
   - name: Enemy
-    uniqueID: 3174110801
-    locked: 0
-  - name: Prpjectile
-    uniqueID: 3880472061
+    uniqueID: 2181847213
     locked: 0
   - name: Turret
-    uniqueID: 4046973509
+    uniqueID: 3219194851
+    locked: 0
+  - name: Projectile
+    uniqueID: 4201908191
     locked: 0

@@ -2,26 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPooler : MonoBehaviour
+public class objectPooler : MonoBehaviour
 {
-    [SerializeField] private GameObject _prefab; // 뭘 preload 할 것인지
-    [SerializeField] private int _poolSize = 10; // pool의 크기
+    [SerializeField]//뭘 preload 할 것인지
+    private GameObject prefab;
+    [SerializeField]//pooler 크기
+    private int poolSize = 10;
 
-    private List<GameObject> _pool; // 배열로 만들어서 관리
-    private GameObject _poolContainer; // pool에서 만든 오브젝트 구조화
+    private List<GameObject> _pool; //배열로 만들어서 오브젝트 관리
+    private GameObject _poolContainer; //pool에서 만든 오브젝트 구조화
 
     private void Awake()
     {
         _pool = new List<GameObject>();
 
-        _poolContainer = new GameObject(name: $"Pool-{_prefab.name}");
+        _poolContainer = new GameObject(name: $"Pool-{prefab.name}");
 
         CreatePooler();
     }
 
     private void CreatePooler()
     {
-        for (int i = 0; i < _poolSize; i++)
+        for(int i=0; i<poolSize; i++)
         {
             _pool.Add(item: CreateInstance());
         }
@@ -29,26 +31,27 @@ public class ObjectPooler : MonoBehaviour
 
     private GameObject CreateInstance()
     {
-        GameObject newInstance = Instantiate(_prefab);
+        GameObject newInstance = Instantiate(prefab);
         newInstance.transform.SetParent(_poolContainer.transform);
 
         newInstance.SetActive(false);
+
         return newInstance;
     }
 
     public GameObject GetInstanceFromPool()
     {
-        for (int i = 0; i < _pool.Count; i++)
+        for (int i=0; i<_pool.Count; i++)
         {
             if (!_pool[i].activeInHierarchy)
             {
-                print(1);
                 return _pool[i];
             }
         }
         return CreateInstance();
     }
 
+    //enemy를 pool로 되돌리는 메소드
     public static void ReturnToPool(GameObject instance)
     {
         instance.SetActive(false);

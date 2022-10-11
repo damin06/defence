@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class Turret : MonoBehaviour
 {
-    [SerializeField] private float _attackRange = 3.0f;
-
+    [SerializeField] private float attackRange = 3.0f;
     private bool _gameStarted;
 
-    private List<Enemy> _enemies; 
+    private List<Enemy> _enemies; //공격범위 안에 들어오는 적들을 리스트로 저장
 
-    public Enemy currentEnemyTarget { get; set; }
+    public Enemy CurrentEnemyTarget { get; set; } //리스트 중 제일 첫번째 놈
 
     private void Start()
     {
@@ -27,17 +26,18 @@ public class Turret : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (!_gameStarted)
-            GetComponent<CircleCollider2D>().radius = _attackRange;
-
-        Gizmos.DrawWireSphere(transform.position, _attackRange);
+        {
+            GetComponent<CircleCollider2D>().radius = attackRange;
+        }
+        Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (collision.CompareTag("Enemy"))  
         {
-            Enemy newenemy = collision.GetComponent<Enemy>();
-            _enemies.Add(newenemy);
+            Enemy newEnemy = collision.GetComponent<Enemy>();
+            _enemies.Add(newEnemy);
         }
     }
 
@@ -45,30 +45,33 @@ public class Turret : MonoBehaviour
     {
         if (collision.CompareTag("Enemy"))
         {
-            Enemy newEnemy = collision.GetComponent<Enemy>();
-            if (_enemies.Contains(newEnemy))
-                _enemies.Remove(newEnemy);
+            Enemy Enemy = collision.GetComponent<Enemy>();
+            if (_enemies.Contains(Enemy))
+            {
+                _enemies.Remove(Enemy);
+            }
         }
     }
 
     private void GetCurrentEnemyTarget()
     {
-        if (_enemies.Count <= 0)
+        if(_enemies.Count <= 0)
         {
-            currentEnemyTarget = null;
+            CurrentEnemyTarget = null;
             return;
         }
-
-        currentEnemyTarget = _enemies[0];
+        CurrentEnemyTarget = _enemies[0];
     }
 
     private void RotateTowardsTarget()
     {
-        if (currentEnemyTarget == null)
+        if(CurrentEnemyTarget == null)
+        {
             return;
-
-        Vector3 targetPos = currentEnemyTarget.transform.position - transform.position;
+        }
+        Vector3 targetPos = CurrentEnemyTarget.transform.position - transform.position;
         float angle = Vector3.SignedAngle(transform.up, targetPos, transform.forward);
         transform.Rotate(0f, 0f, angle);
     }
+
 }
