@@ -5,6 +5,10 @@ using UnityEngine;
 public class TurretProjectile : MonoBehaviour
 {
     [SerializeField] private Transform projectileSpawnPos;
+    [SerializeField] private float delayBtwAttacks = 2f;
+
+    private float _nextAttackTime;
+
     private objectPooler _pooler;
 
     private Projectile _currentProjectileLoaded;
@@ -25,11 +29,15 @@ public class TurretProjectile : MonoBehaviour
             LoadProjectile();
         }
 
-        if(_turret.CurrentEnemyTarget != null && _currentProjectileLoaded != null
-            &&_turret.CurrentEnemyTarget.EnemyHealth.CurrentHealth >0f)
+        if (Time.time > _nextAttackTime)
         {
-            _currentProjectileLoaded.transform.parent = null;
-            _currentProjectileLoaded.SetEnemy(_turret.CurrentEnemyTarget);
+            if (_turret.CurrentEnemyTarget != null && _currentProjectileLoaded != null && _turret.CurrentEnemyTarget.EnemyHealth.CurrentHealth > 0f)
+            {
+                _currentProjectileLoaded.transform.parent = null;
+                _currentProjectileLoaded.SetEnemy(_turret.CurrentEnemyTarget);
+            }
+
+            _nextAttackTime = Time.time + delayBtwAttacks;
         }
     }
 
@@ -42,6 +50,7 @@ public class TurretProjectile : MonoBehaviour
 
         _currentProjectileLoaded = newInstance.GetComponent<Projectile>();
         _currentProjectileLoaded.TurretOwner = this; //총알 만든 타워를 저장
+        _currentProjectileLoaded.ResetProjectile();
 
         newInstance.SetActive(true);
     }
